@@ -10,12 +10,6 @@ Instead of replacing Minecraft's coordinate system, the mod performs controlled 
 - Optional HUD warnings identify the boundary being approached.
 - Optional particle shimmer makes the crossing line visible without altering terrain or chunk rendering.
 
-## Status
-
-**Version:** `0.2.0-alpha.1`  
-**Minecraft:** `1.21.1`  
-**Loader:** `NeoForge`  
-**Author:** `Jakaya`
 
 > Alpha software. Back up important worlds before testing.
 
@@ -48,15 +42,11 @@ Natural Temperature equatorial_distance = circumference / 8
 
 For the default `1,000,000` block circumference this is `125,000` blocks.
 
-The mod does **not** depend on Natural Temperature; this is simply a useful geometry relationship when the two mods are used together.
+The mod does **not** depend on Natural Temperature; this is simply a fantastic relationship when the two mods are used together.
 
 ## Configuration
 
 The config is generated at:
-
-```text
-config/sphericalworldborder-common.toml
-```
 
 Main options:
 
@@ -105,7 +95,3 @@ Put the built JAR in the Minecraft instance's `mods` folder and launch NeoForge 
 ## Releases
 
 For public distribution, attach compiled JARs to GitHub **Releases** rather than committing them into the source tree.
-
-## License
-
-Copyright © 2026 Jakaya. All Rights Reserved.
