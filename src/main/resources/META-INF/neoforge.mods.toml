@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="sphericalworldborder"
+version="0.2.0-alpha.1"
+displayName="Spherical World Border"
+authors="Jakaya"
+displayTest="MATCH_VERSION"
+description='''
+Spherical-style world boundaries for Minecraft.
+
+Wrap east/west longitude and cross north/south poles with a 180-degree longitude shift,
+while preserving normal Minecraft world and chunk coordinates for broad mod compatibility.
+
+Alpha release for Minecraft 1.21.1 on NeoForge.
+Includes optional HUD boundary warnings and a client-side visible boundary shimmer.
+'''
+
+[[dependencies.sphericalworldborder]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.219,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.sphericalworldborder]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1]"
+ordering="NONE"
+side="BOTH"
