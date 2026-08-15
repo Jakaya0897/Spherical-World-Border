@@ -42,7 +42,7 @@ Natural Temperature equatorial_distance = circumference / 8
 
 For the default `1,000,000` block circumference this is `125,000` blocks.
 
-The mod does **not** depend on Natural Temperature; this is simply a fantastic relationship when the two mods are used together.
+The mod does **not** depend on Natural Temperature; this is simply a fantastic relationship when the two mods are used together and the reason i made this mod.
 
 ## Configuration
 
