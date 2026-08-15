@@ -91,7 +91,3 @@ This project uses NeoForge's ModDevGradle development plugin and targets NeoForg
 ## Installing
 
 Put the built JAR in the Minecraft instance's `mods` folder and launch NeoForge 1.21.1.
-
-## Releases
-
-For public distribution, attach compiled JARs to GitHub **Releases** rather than committing them into the source tree.
