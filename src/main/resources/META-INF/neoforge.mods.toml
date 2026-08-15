@@ -4,7 +4,7 @@ license="All Rights Reserved"
 
 [[mods]]
 modId="sphericalworldborder"
-version="0.2.0-alpha.1"
+version="0.2.2-alpha.1"
 displayName="Spherical World Border"
 authors="Jakaya"
 displayTest="MATCH_VERSION"
@@ -15,7 +15,8 @@ Wrap east/west longitude and cross north/south poles with a 180-degree longitude
 while preserving normal Minecraft world and chunk coordinates for broad mod compatibility.
 
 Alpha release for Minecraft 1.21.1 on NeoForge.
-Includes optional HUD boundary warnings and a client-side visible boundary shimmer.
+Includes optional HUD boundary warnings, a client-side visible boundary shimmer, and safe destination checks.
+Safe teleporting now verifies real landing support for ordinary walking/jumping, preserves intentional flight/swimming, allows safe water landings, and rejects bedrock as a landing surface.
 '''
 
 [[dependencies.sphericalworldborder]]
