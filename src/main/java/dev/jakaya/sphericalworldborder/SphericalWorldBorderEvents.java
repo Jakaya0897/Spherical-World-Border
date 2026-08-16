@@ -19,7 +19,8 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 public final class SphericalWorldBorderEvents {
     private static final int MAX_POLE_REFLECTIONS_PER_TICK = 16;
-    private static final double FALLBACK_INSET = 1.0D;
+    private static final double BOUNDARY_EXIT_CLEARANCE = 2.0D;
+    private static final double FALLBACK_INSET = 2.0D;
 
     // A surface fallback deliberately starts a little above the heightmap result.
     // This is safer around snow layers, uneven terrain, overhangs and modded terrain.
@@ -101,6 +102,14 @@ public final class SphericalWorldBorderEvents {
 
         if (!crossed) return;
 
+        // Never place an entity directly back on a trigger plane. At a very shallow
+        // approach angle, tiny floating-point movement around the boundary can otherwise
+        // satisfy the crossing test again on the next tick and make the entity jitter or
+        // appear stuck to the teleport line. Move successful crossings a couple of blocks
+        // into the destination side before running the safe-destination search.
+        newX = applyCrossingClearanceX(crossing, newX, west, east);
+        newZ = applyCrossingClearanceZ(crossing, newZ, north, south);
+
         float yaw = entity.getYRot();
         Vec3 oldMotion = entity.getDeltaMovement();
         if (reflectNorthSouth) yaw = wrapDegrees(180.0F - yaw);
@@ -112,11 +121,22 @@ public final class SphericalWorldBorderEvents {
             boolean sourceInWater = isWaterAtEntity(level, entity, oldX, oldY, oldZ);
             SafeDestination safe = findSafeDestination(level, entity, newX, oldY, newZ, false, sourceInWater);
             if (safe != null) {
-                newX = safe.x;
-                newY = safe.y;
-                newZ = safe.z;
-                verticalAdjusted = Math.abs(newY - oldY) > 0.001D;
-            } else {
+                // Nearby water/surface searches are allowed to move horizontally. Clamp
+                // the final candidate away from the trigger plane as well, then verify
+                // that the clamped position is still genuinely safe. If it is not, fail
+                // over to the existing source-side fallback instead of risking a re-trigger.
+                SafeDestination cleared = enforceCrossingClearance(safe, crossing, west, east, north, south);
+                if (isClearedDestinationSafe(level, entity, cleared, sourceInWater)) {
+                    newX = cleared.x;
+                    newY = cleared.y;
+                    newZ = cleared.z;
+                    verticalAdjusted = Math.abs(newY - oldY) > 0.001D;
+                } else {
+                    safe = null;
+                }
+            }
+
+            if (safe == null) {
                 SafeDestination fallback = findSafeDestination(
                         level,
                         entity,
@@ -378,6 +398,60 @@ public final class SphericalWorldBorderEvents {
                 || state.is(Blocks.SWEET_BERRY_BUSH)
                 || state.is(BlockTags.FIRE)
                 || state.is(BlockTags.CAMPFIRES);
+    }
+
+    private static double applyCrossingClearanceX(Crossing crossing, double x, double west, double east) {
+        return switch (crossing) {
+            // Crossing EAST wraps to the WEST edge, so push eastward into the map.
+            case EAST -> Math.max(x, west + BOUNDARY_EXIT_CLEARANCE);
+            // Crossing WEST wraps to the EAST edge, so push westward into the map.
+            case WEST -> Math.min(x, east - BOUNDARY_EXIT_CLEARANCE);
+            default -> x;
+        };
+    }
+
+    private static double applyCrossingClearanceZ(Crossing crossing, double z, double north, double south) {
+        return switch (crossing) {
+            // Pole reflection remains in the same polar coordinate region. Push away
+            // from the pole in the direction the reflected movement now travels.
+            case NORTH -> Math.max(z, north + BOUNDARY_EXIT_CLEARANCE);
+            case SOUTH -> Math.min(z, south - BOUNDARY_EXIT_CLEARANCE);
+            default -> z;
+        };
+    }
+
+    private static SafeDestination enforceCrossingClearance(
+            SafeDestination destination,
+            Crossing crossing,
+            double west,
+            double east,
+            double north,
+            double south
+    ) {
+        return new SafeDestination(
+                applyCrossingClearanceX(crossing, destination.x, west, east),
+                destination.y,
+                applyCrossingClearanceZ(crossing, destination.z, north, south)
+        );
+    }
+
+    private static boolean isClearedDestinationSafe(
+            ServerLevel level,
+            Entity entity,
+            SafeDestination destination,
+            boolean sourceInWater
+    ) {
+        if (sourceInWater) {
+            return isWaterDestination(level, entity, destination.x, destination.y, destination.z);
+        }
+        return isSafeAt(
+                level,
+                entity,
+                destination.x,
+                destination.y,
+                destination.z,
+                !isIntentionalFreeFlight(entity)
+        );
     }
 
     private static double fallbackX(Crossing crossing, double originalX, double west, double east) {

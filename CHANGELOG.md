@@ -1,12 +1,14 @@
-# 0.2.2-alpha.1
+# 0.2.3-alpha.1
 - Fixed NeoForge 1.21.1 runtime linkage for Elytra detection by calling `isFallFlying()` on `LivingEntity` instead of base `Entity`.
+- Added a 2-block inward clearance after successful pole and longitude crossings to prevent shallow-angle boundary re-trigger jitter.
+- Final safe destinations are re-clamped and revalidated so nearby water/surface searches cannot place entities back onto the trigger line.
 
 - Fixed unsafe destination validation that could accept unsupported air as a valid landing position.
 - Normal walking/jumping crossings now require real support.
 - Added safe-water landing support.
-- Preserved altitude for intentional flight/Elytra/swimming.
+- Preserved altitude for intentional Elytra/player flight and improved water-medium preservation for swimming crossings.
 - Bedrock is no longer accepted as a safe landing surface.
-- Updated internal mod version and manifest to 0.2.2-alpha.1.
+- Updated internal mod version and manifest to 0.2.3-alpha.1.
 
 ## Safe teleport refinement
 - Water crossings now preserve water as the destination medium where possible instead of merely preserving Y level.

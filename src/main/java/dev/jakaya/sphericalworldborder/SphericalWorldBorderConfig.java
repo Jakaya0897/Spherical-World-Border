@@ -26,7 +26,7 @@ public final class SphericalWorldBorderConfig {
         builder.comment("============================================================");
         builder.comment(" Spherical World Border");
         builder.comment(" Author: Jakaya");
-        builder.comment(" Version: 0.2.2-alpha.1");
+        builder.comment(" Version: 0.2.3-alpha.1");
         builder.comment(" Minecraft: 1.21.1 | Loader: NeoForge");
         builder.comment("============================================================");
         builder.comment("ALPHA SOFTWARE - back up important worlds before testing.");
@@ -84,8 +84,9 @@ public final class SphericalWorldBorderConfig {
         builder.comment("").comment("--- SAFE TELEPORT ---");
         SAFE_TELEPORT = builder.comment("Prevent boundary crossings from placing entities inside solid terrain or obvious hazards.")
                 .comment("Ordinary walking/jumping requires a verified landing surface or safe water.")
-                .comment("Intentional Elytra, swimming and player flight can preserve altitude.")
+                .comment("Intentional Elytra/player flight can preserve altitude; water crossings prefer nearby safe water.")
                 .comment("Bedrock is never accepted as a safe landing surface.")
+                .comment("Successful crossings are pushed inward from the trigger line to avoid immediate re-trigger jitter.")
                 .comment("If no safe destination is found, the crossing fails closed instead of teleporting into danger.")
                 .define("safeTeleport", true);
         SAFE_TELEPORT_SEARCH_HEIGHT = builder.comment("Maximum number of blocks above the destination surface to search for safe free space.")
